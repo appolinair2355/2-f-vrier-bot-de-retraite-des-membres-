@@ -1,67 +1,86 @@
-# 🤖 Bot Telegram Multi-Canaux
+# 🤖 Bot Telegram - Version Render (Sans Telethon)
 
-Bot Telegram qui gère **plusieurs canaux privés indépendamment**, chacun avec ses propres administrateurs et membres.
-
----
-
-## 🎯 Différences avec la version simple
-
-| Fonctionnalité | Version Simple | Version Multi-Canaux |
-|---------------|----------------|---------------------|
-| Canaux gérés | 1 seul | Illimités |
-| Admins | 2 fixes | Configurables par canal |
-| Base de données | `members.json` | `channels_data.json` |
-| Interface | Commandes texte | Boutons + Commandes |
-| Super Admin | Non | Oui (accès total) |
+Version du bot optimisée pour le déploiement sur Render et autres plateformes cloud.
 
 ---
 
-## 📁 Structure du projet
+## ⚠️ Problème résolu
 
-```
-telegram-bot-multi/
-├── config.py           # Configuration globale
-├── main.py             # Code principal (multi-canaux)
-├── channels_data.json  # Base de données multi-canaux
-├── requirements.txt    # Dépendances
-├── .gitignore         # Fichiers ignorés
-└── README.md          # Documentation
-```
+| Problème | Solution |
+|----------|----------|
+| Telethon nécessite une session interactive | ✅ Utilise `python-telegram-bot` |
+| Fichier `.session` à créer manuellement | ✅ Pas besoin de fichier session |
+| Erreur "Could not find the input entity" | ✅ API plus simple et stable |
 
 ---
 
-## 🚀 Démarrage rapide
+## 📦 Différences avec la version Telethon
 
-### 1. Configuration
+| Aspect | Telethon | python-telegram-bot |
+|--------|----------|---------------------|
+| Session | Fichier `.session` requis | Token suffisant |
+| Authentification | API_ID + API_HASH | BOT_TOKEN uniquement |
+| Complexité | Plus complexe | Plus simple |
+| Déploiement cloud | Difficile | Facile ✅ |
 
-Éditez `config.py` :
+---
 
-```python
-# Identifiants Telegram (my.telegram.org)
-API_ID = 29177661
-API_HASH = "votre_api_hash"
-BOT_TOKEN = "votre_token_bot"
+## 🚀 Configuration Render
 
-# Super Admin (vous)
-SUPER_ADMIN_ID = 1190237801  # Votre ID Telegram
+### 1. Variables d'environnement (Obligatoires)
+
+Dans Render Dashboard → Your Service → Environment:
+
+```
+BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrSTUvwxyz
+CHANNEL_ID=-1001234567890
+CHANNEL_LINK=https://t.me/+VotreLienIci
+CHANNEL_NAME=Mon Canal VIP
+ADMINS=1190237801,1190237802
+PORT=10000
 ```
 
-### 2. Installation
+### 2. Build & Start Commands
 
 ```bash
+# Build Command:
 pip install -r requirements.txt
+
+# Start Command:
 python main.py
 ```
 
-### 3. Premier canal
+---
 
-1. Envoyez `/start` au bot
-2. Cliquez sur **"➕ Créer un Canal"** (super admin uniquement)
-3. Suivez les 4 étapes :
-   - ID du canal Telegram
-   - Nom du canal
-   - Lien d'invitation
-   - ID du premier admin
+## 📋 Prérequis
+
+### 1. Créer le bot
+
+1. Allez sur [@BotFather](https://t.me/BotFather)
+2. Envoyez `/newbot`
+3. Suivez les instructions
+4. **Copiez le TOKEN** (ex: `123456789:ABCdef...`)
+
+### 2. Créer le canal
+
+1. Créez un canal privé sur Telegram
+2. Ajoutez votre bot comme **administrateur**
+3. Donnez-lui ces permissions:
+   - ✅ Ajouter des membres
+   - ✅ Bannir des utilisateurs
+   - ✅ Supprimer des messages
+   - ✅ Gérer le groupe
+
+### 3. Obtenir l'ID du canal
+
+1. Ajoutez [@RawDataBot](https://t.me/RawDataBot) à votre canal
+2. Le bot enverra l'ID (format: `-1001234567890`)
+3. Retirez @RawDataBot
+
+### 4. Obtenir votre ID
+
+1. Envoyez `/start` à [@userinfobot](https://t.me/userinfobot)
+2. Notez votre ID
 
 ---
 
@@ -71,181 +90,82 @@ python main.py
 
 | Commande | Description |
 |----------|-------------|
-| `/start` | Menu principal avec boutons |
-| `/register` | S'inscrire à un canal |
+| `/start` | Démarrer l'inscription |
 
 ### Administrateur
 
-| Commande | Syntaxe | Description |
-|----------|---------|-------------|
-| `/validate` | `/validate <canal_id> <user_id> <heures>` | Valider un membre |
-| `/remove` | `/remove <canal_id> <user_id>` | Retirer un membre |
-
----
-
-## 📊 Structure de la base de données
-
-```json
-{
-    "channels": {
-        "-1001234567890": {
-            "name": "Canal VIP Premium",
-            "link": "https://t.me/+xxx",
-            "admins": [1190237801, 1190237802],
-            "members": {
-                "987654321": {
-                    "nom": "Dupont",
-                    "prenom": "Jean",
-                    "pays": "France",
-                    "join_time": 1706880000,
-                    "duration": 86400,
-                    "expires_at": 1706966400
-                }
-            },
-            "created_at": "02/02/2026 à 14:30",
-            "updated_at": "02/02/2026 à 14:30"
-        }
-    },
-    "global_admins": [1190237801]
-}
-```
-
----
-
-## 🔐 Rôles et permissions
-
-### Super Admin
-- ✅ Créer des canaux
-- ✅ Gérer tous les canaux
-- ✅ Ajouter des admins globaux
-- ✅ Toutes les commandes
-
-### Admin de canal
-- ✅ Gérer son canal
-- ✅ Valider/retirer des membres
-- ✅ Voir les statistiques
-- ❌ Créer des canaux
-- ❌ Gérer d'autres canaux
-
-### Utilisateur
-- ✅ S'inscrire à un canal
-- ✅ Recevoir le lien après validation
-- ❌ Aucune commande admin
+| Commande | Description |
+|----------|-------------|
+| `/list` | Liste des membres |
+| `/remove <id>` | Retirer un membre |
+| `/purge` | Vider le canal |
+| `/info` | Infos du canal |
+| `/help` | Aide |
 
 ---
 
 ## 🔄 Flux d'utilisation
 
-### Pour le Super Admin
-
 ```
-/start → "➕ Créer un Canal" → Remplir les 4 étapes
-                              → Canal créé!
-                              
-/start → "📋 Mes Canaux" → Sélectionner un canal
-                         → Gérer (stats, membres, purge...)
-```
-
-### Pour un Admin de canal
-
-```
-/start → "📋 Mes Canaux" → Son canal
-                         → Gérer les membres
-
-Quand inscription: Reçoit notification
-→ /validate <canal_id> <user_id> <heures>
-```
-
-### Pour un Utilisateur
-
-```
-/register → Choisir un canal
-          → Remplir Nom/Prénom/Pays
-          → Attendre validation
-          → Reçoit lien d'accès
+Utilisateur          Admin              Bot
+    |                  |                 |
+    |──/start─────────▶|                 |
+    |◄──Formulaire─────|                 |
+    |──Nom/Prénom/Pays▶|                 |
+    |                  |◄──Notification──|
+    |                  │──[Bouton: Valider 24h]──▶|
+    |◄──Lien d'accès──────────────────────────────|
+    |                  |                 |
+    │──Rejoint canal──▶│                 │
+    │                  │                 │
+    │                  │                 │◄──Expiration auto
+    │◄──"Accès expiré"────────────────────────────│
 ```
 
 ---
 
-## 🛠️ Déploiement sur Render
+## 📁 Structure
 
-```yaml
-# render.yaml
-services:
-  - type: web
-    name: telegram-bot-multi
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python main.py
-    envVars:
-      - key: API_ID
-        value: 29177661
-      - key: API_HASH
-        value: votre_api_hash
-      - key: BOT_TOKEN
-        value: votre_token
-      - key: SUPER_ADMIN_ID
-        value: 1190237801
-      - key: PORT
-        value: 10000
 ```
-
----
-
-## 📱 Captures d'écran (exemple)
-
-### Menu Principal
-```
-🤖 Bot Multi-Canaux - Gestionnaire d'Accès
-
-Bienvenue! Ce bot vous permet de gérer l'accès temporaire 
-à plusieurs canaux privés.
-
-👤 Votre ID: `1190237801`
-
-[📋 Mes Canaux] [➕ Créer un Canal]
-[❓ Aide]
-```
-
-### Détail d'un canal
-```
-📢 Canal VIP Premium
-
-🆔 ID: `-1001234567890`
-👥 Membres: 15
-👤 Admins: 2
-🔗 Lien: https://t.me/+xxx
-
-🕐 Créé le: 02/02/2026 à 14:30
-
-[📊 Statistiques] [👥 Liste des membres]
-[⚙️ Paramètres]   [🔗 Obtenir le lien]
-[➕ Ajouter admin] [🗑️ Purge]
-[🔙 Retour]
+telegram-bot-render/
+├── config.py        # Configuration (variables d'env)
+├── main.py          # Code principal
+├── requirements.txt # Dépendances
+├── members.json     # Base de données
+└── README.md        # Documentation
 ```
 
 ---
 
 ## 🐛 Dépannage
 
-| Problème | Solution |
-|----------|----------|
-| "Accès refusé" | Vérifiez que vous êtes admin du canal |
-| "Canal non trouvé" | Vérifiez l'ID (doit commencer par -100) |
-| L'utilisateur ne reçoit pas le lien | Il doit avoir démarré le bot avec `/start` |
-| Le bot n'ajoute pas au canal | Vérifiez que le bot est admin du canal Telegram |
+| Erreur | Solution |
+|--------|----------|
+| "Bot not found" | Vérifiez BOT_TOKEN |
+| "Chat not found" | Vérifiez CHANNEL_ID (doit commencer par -100) |
+| "Not enough rights" | Ajoutez le bot comme admin du canal |
+| "User not found" | L'utilisateur doit d'abord démarrer le bot |
 
 ---
 
-## 📝 Changelog
+## 📝 Notes importantes
 
-### v2.0 - Multi-Canaux
-- ✅ Gestion de plusieurs canaux indépendants
-- ✅ Interface avec boutons
-- ✅ Super admin + admins par canal
-- ✅ Commandes `/validate` et `/remove` avec canal_id
-- ✅ Statistiques par canal
+1. **Le bot doit être admin du canal** pour ajouter/retirer des membres
+2. **Les utilisateurs doivent démarrer le bot** avant de pouvoir être ajoutés
+3. **Les liens d'invitation** sont générés automatiquement (usage unique)
+4. **Les expirations** sont vérifiées toutes les 60 secondes
 
 ---
 
-**Besoin d'aide ?** Ouvrez une issue sur GitHub.
+## ✅ Déploiement rapide sur Render
+
+```bash
+# 1. Créer un repo GitHub avec ces fichiers
+# 2. Connecter Render au repo
+# 3. Configurer les variables d'environnement
+# 4. Deploy!
+```
+
+---
+
+**Le bot est maintenant prêt pour Render!** 🎉

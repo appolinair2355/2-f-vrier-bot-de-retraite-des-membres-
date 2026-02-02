@@ -1,16 +1,30 @@
 """
-Bot Telegram Multi-Canaux - Gestionnaire d'Accès Temporaire
-Configuration centralisée pour plusieurs canaux indépendants
+Bot Telegram - Gestionnaire d'Accès Temporaire (Version Render)
+Utilise python-telegram-bot (pas besoin de session Telethon)
 """
 
 import os
 
 # ═══════════════════════════════════════════════════════════════
-# IDENTIFIANTS API TELEGRAM (Globaux)
+# CONFIGURATION - REMPLACEZ CES VALEURS
 # ═══════════════════════════════════════════════════════════════
-API_ID = int(os.getenv("API_ID", "29177661"))
-API_HASH = os.getenv("API_HASH", "a8639172fa8d35dbfd8ea46286d349ab")
-BOT_TOKEN = os.getenv("BOT_TOKEN", "123456789:ABCdefGHIjklMNOpqrSTUvwxyz")
+
+# Token du bot (obtenu via @BotFather)
+BOT_TOKEN = os.getenv("BOT_TOKEN", "VOTRE_TOKEN_ICI")
+
+# Canal privé (ID commence par -100)
+CHANNEL_ID = int(os.getenv("CHANNEL_ID", "-1001234567890"))
+
+# Lien d'invitation du canal
+CHANNEL_LINK = os.getenv("CHANNEL_LINK", "https://t.me/+VotreLienIci")
+
+# Nom du canal
+CHANNEL_NAME = os.getenv("CHANNEL_NAME", "Mon Canal Privé")
+
+# IDs des administrateurs (séparés par des virgules)
+# Exemple: "1190237801,1190237802"
+ADMINS_STR = os.getenv("ADMINS", "1190237801")
+ADMINS = [int(x.strip()) for x in ADMINS_STR.split(",") if x.strip()]
 
 # ═══════════════════════════════════════════════════════════════
 # CONFIGURATION SERVEUR
@@ -22,11 +36,5 @@ PORT = int(os.getenv("PORT", "10000"))
 # ═══════════════════════════════════════════════════════════════
 MIN_DURATION_HOURS = 1
 MAX_DURATION_HOURS = 750
-DATA_FILE = "channels_data.json"
-SESSION_FILE = "bot_multi.session"
-CHECK_INTERVAL = 60  # Vérifier toutes les minutes
-
-# ═══════════════════════════════════════════════════════════════
-# SUPER ADMIN (Créateur du bot - a accès à tout)
-# ═══════════════════════════════════════════════════════════════
-SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "1190237801"))
+DATA_FILE = "members.json"
+CHECK_INTERVAL = 60  # Vérifier expirations toutes les 60 secondes
