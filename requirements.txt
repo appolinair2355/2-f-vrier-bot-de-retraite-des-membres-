@@ -1,0 +1,4 @@
+# Bot Telegram Multi-Canaux
+Telethon==1.33.1
+aiohttp==3.9.1
+python-dateutil==2.8.2
